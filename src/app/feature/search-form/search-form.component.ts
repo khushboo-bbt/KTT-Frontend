@@ -97,30 +97,59 @@ export class SearchFormComponent implements OnInit {
     }
   }
 
-  selectAirport2(event: any, field: string) {
+  selectAirport2(event: any, field: string): void {
     if (!event || !event.iataCode) return;
+    
     const selectedCode = event.iataCode;
-
-    // Handle active Multi-City leg
     const legsArray = this.multiCityFormData.get('legs') as FormArray;
     const currentLeg = legsArray.at(this.activeFlightIndex) as FormGroup;
-  
-    // First, patch the current field value
+
+    // Patch the selected airport
     currentLeg.patchValue({ [field]: selectedCode });
 
-    // Then, validate the current leg's from and to
+    // Validate origin and destination are different
     const currentLegValues = currentLeg.value;
-    if (
-      currentLegValues.origin &&
-      currentLegValues.destination &&
-      currentLegValues.origin === currentLegValues.destination
-    ) {
+    if (currentLegValues.origin && 
+        currentLegValues.destination && 
+        currentLegValues.origin === currentLegValues.destination) {
       alert(`The "From" and "To" fields in leg ${this.activeFlightIndex + 1} cannot be the same.`);
-      // Reset only the field user just selected
       currentLeg.patchValue({ [field]: '' });
-      return;
     }
   }
+
+  // Method to set active flight index
+  setActiveFlightIndex(index: number): void {
+    const legsArray = this.multiCityFormData.get('legs') as FormArray;
+    if (index >= 0 && index < legsArray.length) {
+      this.activeFlightIndex = index;
+    }
+  }
+
+  // Method to add new leg
+  // addLeg(): void {
+  //   const legs = this.multiCityFormData.get('legs') as FormArray;
+  //   legs.push(this.createLegFormGroup());
+  // }
+
+  // Method to remove leg
+  // removeLeg(index: number): void {
+  //   const legs = this.multiCityFormData.get('legs') as FormArray;
+  //   if (legs.length > 1) {
+  //     legs.removeAt(index);
+  //     if (this.activeFlightIndex >= legs.length) {
+  //       this.activeFlightIndex = legs.length - 1;
+  //     }
+  //   }
+  // }
+
+  // Helper method to create a new leg form group
+  // private createLegFormGroup(): FormGroup {
+  //   return this.formBuilder.group({
+  //     origin: [null, Validators.required],
+  //     destination: [null, Validators.required],
+  //     fromDate: ['', Validators.required]
+  //   });
+  // }
   
   
   listOfAirports: any[] = [];
@@ -132,29 +161,47 @@ export class SearchFormComponent implements OnInit {
   }
   
   // Create a leg form group
-  createLegFormGroup(): FormGroup {
+  createLegFormGroup(initialValues: any = null): FormGroup {
     return this.formBuilder.group({
-      origin: [null, Validators.required],
-      destination: [null, Validators.required],
-      fromDate: ['', Validators.required]
+      origin: [initialValues?.origin || null, Validators.required],
+      destination: [initialValues?.destination || null, Validators.required],
+      fromDate: [initialValues?.fromDate || '', Validators.required]
     });
   }
    // Add a new leg (max 5)
-   addLeg(): void {
-    if (this.legs.length < 5) {
-      this.legs.push(this.createLegFormGroup());
-      this.activeFlightIndex = this.legs.length - 1; // Set newly added flight as active
+   addLeg(initialValues: any = null): void {
+    const legsArray = this.multiCityFormData.get('legs') as FormArray;
+    if (legsArray.length < 5) {
+      const newLeg = this.createLegFormGroup(initialValues);
+      legsArray.push(newLeg);
+      this.activeFlightIndex = legsArray.length - 1;
+      
+      // Update form validity
+      this.multiCityFormData.updateValueAndValidity();
     }
   }
 
   removeLeg(index: number): void {
     if (this.legs.length > 1) {
-      this.legs.removeAt(index);
-  
-      // Ensure the last available tab remains active
-      if (index === this.activeFlightIndex) {
-        this.activeFlightIndex = Math.max(0, this.legs.length - 1);
+      const legsArray = this.multiCityFormData.get('legs') as FormArray;
+      
+      // Remove the leg
+      legsArray.removeAt(index);
+
+      // Update form validity
+      this.multiCityFormData.updateValueAndValidity();
+
+      // Adjust active flight index if needed
+      if (this.activeFlightIndex >= legsArray.length) {
+        this.activeFlightIndex = legsArray.length - 1;
       }
+
+      // Reindex remaining legs if needed
+      const remainingLegs = legsArray.controls;
+      remainingLegs.forEach((leg, idx) => {
+        // Update any index-dependent values if needed
+        // For example, if you store the leg number somewhere
+      });
     }
   }  
   
@@ -361,24 +408,32 @@ export class SearchFormComponent implements OnInit {
         }
     
         if (formType === 'multi-city') {
-          const legs = JSON.parse(params['legs'] || '[]');
-          if (legs.length) {
-            const legControls = legs.map((leg: any) =>
-              this.formBuilder.group({
-                origin: [leg.origin, Validators.required],
-                destination: [leg.destination, Validators.required],
-                fromDate: [leg.fromDate, Validators.required]
-              })
-            );
-            this.multiCityFormData.setControl('legs', new FormArray(legControls));
+          try {
+            const legs = JSON.parse(params['legs'] || '[]');
+            if (legs.length) {
+              const legControls = legs.map((leg: any) =>
+                this.formBuilder.group({
+                  origin: [leg.origin, Validators.required],
+                  destination: [leg.destination, Validators.required],
+                  fromDate: [leg.fromDate, Validators.required]
+                })
+              );
+              
+              // Create a new FormGroup with the updated legs FormArray
+              this.multiCityFormData = this.formBuilder.group({
+                legs: this.formBuilder.array(legControls),
+                adults: [+params['adults'] || 1, [Validators.required, Validators.min(1)]],
+                children: [+params['children'] || 0, [Validators.required, Validators.min(0)]],
+                infants: [+params['infants'] || 0, [Validators.required, Validators.min(0)]],
+                routes: [params['routes'] || 'Non Stop', Validators.required],
+                class: [params['class'] || 'Economy', Validators.required]
+              });
+            }
+          } catch (error) {
+            console.error('Error parsing legs:', error);
+            // Initialize with default values if parsing fails
+            this.initializeMultiCityForm();
           }
-          this.multiCityFormData.patchValue({
-            adults: +params['adults'] || 1,
-            children: +params['children'] || 0,
-            infants: +params['infants'] || 0,
-            routes: params['routes'] || 'Non Stop',
-            class: params['class'] || 'Economy',
-          });
           this.toggleMultiCity();
         }
       }
@@ -470,48 +525,43 @@ export class SearchFormComponent implements OnInit {
   oneWayForm: boolean = true;
   roundTripForm: boolean = false;
   multiCityForm: boolean = false;
-  groupFareForm: boolean = false;
-
   activeTab: string = 'oneWay'; // Set the default active tab to 'oneWay'
-  toggleOneWayTrip() {
-    if (this.roundTripForm || this.multiCityForm || this.groupFareForm) {
-      this.oneWayForm = true;
-      this.roundTripForm = false;
-      this.multiCityForm = false;
-      this.groupFareForm = false;
-      this.activeTab = 'oneWay';
-    }
+
+  toggleOneWayTrip(): void {
+    this.oneWayForm = true;
+    this.roundTripForm = false;
+    this.multiCityForm = false;
+    this.activeTab = 'oneWay';
   }
 
-  toggleRoundTrip() {
-    if (this.oneWayForm || this.multiCityForm || this.groupFareForm) {
-      this.roundTripForm = true;
-      this.oneWayForm = false;
-      this.multiCityForm = false;
-      this.groupFareForm = false;
-      this.activeTab = 'roundTrip';
-    }
+  toggleRoundTrip(): void {
+    this.oneWayForm = false;
+    this.roundTripForm = true;
+    this.multiCityForm = false;
+    this.activeTab = 'roundTrip';
   }
 
-  toggleMultiCity() {
-    if (this.oneWayForm || this.roundTripForm || this.groupFareForm) {
-      this.multiCityForm = true;
-      this.oneWayForm = false;
-      this.roundTripForm = false;
-      this.groupFareForm = false;
-      this.activeTab = 'multiCity';
-    }
+  toggleMultiCity(): void {
+    this.oneWayForm = false;
+    this.roundTripForm = false;
+    this.multiCityForm = true;
+    this.activeTab = 'multiCity';
   }
 
-  // toggleGroupFare() {
-  //   if (this.oneWayForm || this.roundTripForm || this.multiCityForm) {
-  //     this.groupFareForm = true;
-  //     this.oneWayForm = false;
-  //     this.roundTripForm = false;
-  //     this.multiCityForm = false;
-  //     this.activeTab = 'groupFare';
-  //   }
-  // }
+  // Method to handle tab changes from child component
+  onTabChange(tabName: string): void {
+    switch (tabName) {
+      case 'oneWay':
+        this.toggleOneWayTrip();
+        break;
+      case 'roundTrip':
+        this.toggleRoundTrip();
+        break;
+      case 'multiCity':
+        this.toggleMultiCity();
+        break;
+    }
+  }
 
   handleSliderChange(value: any) {
     console.log('Value ->', value);
@@ -529,4 +579,14 @@ export class SearchFormComponent implements OnInit {
   //     },
   //   });
   // }
+  private initializeMultiCityForm(): void {
+    this.multiCityFormData = this.formBuilder.group({
+      legs: this.formBuilder.array([this.createLegFormGroup()]),
+      adults: [1, [Validators.required, Validators.min(1)]],
+      children: [0, [Validators.required, Validators.min(0)]],
+      infants: [0, [Validators.required, Validators.min(0)]],
+      routes: ['Non Stop', Validators.required],
+      class: ['Economy', Validators.required]
+    });
+  }
 }

@@ -1,31 +1,66 @@
-<div class="container" [formGroup]="formGroup">
-  <form (ngSubmit)="submitMultiCityFormData()">
-    <div class="form-content">
+<div *ngIf="multiCityForm" class="container">
+  <form [formGroup]="formGroup" (ngSubmit)="submitMultiCityFormData()">
+    <div class="multicity-container">
+      <!-- Flight Tabs -->
+      <div class="d-flex mb-2 flight-tabs align-items-center">
+        <ng-container *ngFor="let leg of legs.controls; let i = index">
+          <div
+            class="flight-tab"
+            [class.active]="activeFlightIndex === i"
+            (click)="setActiveFlightIndex(i)"
+          >
+            FLIGHT {{ i + 1 }}
+            <span
+              *ngIf="legs.length > 1"
+              class="remove-icon"
+              (click)="$event.stopPropagation(); removeLeg(i)"
+            >✖</span>
+          </div>
+        </ng-container>
+
+        <!-- Add Flight Button -->
+        <div
+          *ngIf="legs.length < 5"
+          class="flight-tab btn add-flight"
+          (click)="addLeg()"
+        >
+          Add Flight +
+        </div>
+      </div>
+
+      <!-- Flight Forms -->
       <div formArrayName="legs">
-        <ng-container *ngFor="let leg of legs.controls; let i = index" [formGroupName]="i">
-          <div class="flight-section" [class.active]="activeFlightIndex === i">
+        <ng-container *ngFor="let leg of legs.controls; let i = index">
+          <div
+            [formGroupName]="i"
+            class="flight-form"
+            [class.d-none]="activeFlightIndex !== i"
+          >
             <div class="row mb-3">
               <div class="col-md-5">
                 <label for="origin">From</label>
                 <ng-select
                   [items]="listOfAirports"
-                  bindLabel="airportName"
-                  bindValue="airportCode"
-                  placeholder="Enter city or airport"
+                  bindLabel="displayLabel"
+                  bindValue="iataCode"
+                  placeholder="Select Airport"
                   formControlName="origin"
                   [clearable]="false"
                   (change)="selectAirport2($event, 'origin')"
-                  (search)="onSearch($event.term)"
+                  [typeahead]="searchInput$"
                 >
-                  <ng-template ng-option-tmp let-item="item">
-                    <div class="airport-option">
-                      <div class="airport-code">{{ item.airportCode }}</div>
-                      <div class="airport-details">
-                        <span class="airport-name">{{ item.airportName }}</span>
-                      </div>
+                <ng-template ng-label-tmp let-item="item">
+                  <span>{{ item.iataCode }} - {{ item.airportCity }}</span>
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span>{{ item.airportCity }}</span> (<span>{{ item.iataCode }}</span>)<br />
+                      <span class="text-muted small">{{ item.airportName }}</span>
                     </div>
-                  </ng-template>
-                </ng-select>
+                  </div>
+                </ng-template>
+              </ng-select>
                 <div
                   class="text-danger small"
                   *ngIf="leg.get('origin')?.invalid && leg.get('origin')?.touched"
@@ -38,23 +73,26 @@
                 <label for="destination">To</label>
                 <ng-select
                   [items]="listOfAirports"
-                  bindLabel="airportName"
-                  bindValue="airportCode"
-                  placeholder="Enter city or airport"
+                  bindLabel="displayLabel"
+                  bindValue="iataCode"
+                  placeholder="Select Airport"
                   formControlName="destination"
                   [clearable]="false"
                   (change)="selectAirport2($event, 'destination')"
-                  (search)="onSearch($event.term)"
+                  [typeahead]="searchInput$"
                 >
-                  <ng-template ng-option-tmp let-item="item">
-                    <div class="airport-option">
-                      <div class="airport-code">{{ item.airportCode }}</div>
-                      <div class="airport-details">
-                        <span class="airport-name">{{ item.airportName }}</span>
-                      </div>
+                <ng-template ng-label-tmp let-item="item">
+                  <span>{{ item.iataCode }} - {{ item.airportCity }}</span>
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span>{{ item.airportCity }}</span> (<span>{{ item.iataCode }}</span>)<br />
+                      <span class="text-muted small">{{ item.airportName }}</span>
                     </div>
-                  </ng-template>
-                </ng-select>
+                  </div>
+                </ng-template>
+              </ng-select>
                 <div
                   class="text-danger small"
                   *ngIf="leg.get('destination')?.invalid && leg.get('destination')?.touched"
@@ -70,7 +108,7 @@
                 <input
                   class="form-control"
                   type="date"
-                  placeholder="Search here"
+                  placeholder="Select Date"
                   required
                   formControlName="fromDate"
                   [attr.min]="today"

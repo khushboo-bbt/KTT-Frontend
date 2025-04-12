@@ -1,23 +1,60 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-flight-type-tabs',
-  templateUrl: './app-flight-type-tabs.component.html',
-  styleUrls: ['./app-flight-type-tabs.component.css']
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div class="nav nav-pills form-type">
+      <div class="nav-item">
+        <button 
+          [class.active]="activeTab === 'oneWay'"
+          (click)="onTabClick('oneWay')"
+          class="nav-link">
+          One Way
+        </button>
+      </div>
+      <div class="nav-item">
+        <button 
+          [class.active]="activeTab === 'roundTrip'"
+          (click)="onTabClick('roundTrip')"
+          class="nav-link">
+          Round Trip
+        </button>
+      </div>
+      <div class="nav-item">
+        <button 
+          [class.active]="activeTab === 'multiCity'"
+          (click)="onTabClick('multiCity')"
+          class="nav-link">
+          Multi City
+        </button>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .form-type {
+      border-bottom: 5px solid #007191;
+      display: flex;
+      gap: 10px;
+      padding-bottom: 2px;
+    }
+    .nav-link {
+      cursor: pointer;
+      color: black;
+    }
+    .nav-link.active {
+      background-color: #007191;
+      color: white;
+    }
+  `]
 })
 export class AppFlightTypeTabsComponent {
   @Input() activeTab: string = 'oneWay';
+  @Output() tabChange = new EventEmitter<string>();
 
-  @Output() tabChange: EventEmitter<string> = new EventEmitter<string>();
-  @Input() toggleRoundTrip: any;
-  @Input() toggleMultiCity: any;
-  @Input() toggleGroupFare: any;
-  @Input() toggleOneWayTrip: any;
-
-  onTabChange(tab: string): void {
-    this.tabChange.emit(tab);
+  onTabClick(tabName: string): void {
+    this.tabChange.emit(tabName);
   }
-  oneWayForm: any;
-  roundTripForm: any;
-  multiCityForm: any;
 }
