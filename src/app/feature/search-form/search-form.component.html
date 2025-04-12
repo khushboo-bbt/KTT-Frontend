@@ -1,0 +1,73 @@
+<section id="hero">
+    <!-- Carousel Section -->
+    <app-carousel></app-carousel>
+  
+    <div class="form-container">
+      <!-- Flight Type Tabs -->
+      <app-flight-type-tabs
+        [activeTab]="activeTab"
+        (tabChange)="handleTabChange($event)">
+      </app-flight-type-tabs>
+  
+      <div class="card">
+        <div class="card-body col-lg-12">
+          <!-- One Way Form -->
+          <ng-container *ngIf="oneWayForm">
+            <form
+              [formGroup]="oneWayFormData"
+              (ngSubmit)="submitOneWayFormData()">
+              <!-- Common flight fields are reused here -->
+              <app-common-flight-fields
+                [formGroup]="oneWayFormData"
+                [showReturn]="false"
+                (swapAirports)="swapSelection()">
+              </app-common-flight-fields>
+  
+              <button type="submit" class="btn btn-continue">
+                <img src="../../../assets/icons/search.svg" alt="Search Icon" class="me-1" />
+                Search Flights
+              </button>
+            </form>
+          </ng-container>
+  
+          <!-- Round Trip Form -->
+          <ng-container *ngIf="roundTripForm">
+            <form
+              [formGroup]="roundTripFormData"
+              (ngSubmit)="submitRoundTripFormData()">
+              <!-- In roundtrip, we enable the return date input -->
+              <app-common-flight-fields
+                [formGroup]="roundTripFormData"
+                [showReturn]="true"
+                (swapAirports)="swapSelection()">
+              </app-common-flight-fields>
+  
+              <button type="submit" class="btn btn-continue">
+                <img src="../../../assets/icons/search.svg" alt="Search Icon" class="me-1" />
+                Search Flights
+              </button>
+            </form>
+          </ng-container>
+  
+          <!-- Multi City Form -->
+          <ng-container *ngIf="multiCityForm">
+            <form
+              [formGroup]="multiCityFormData"
+              (ngSubmit)="submitMultiCityFormData()">
+              <!-- The multi-city component handles dynamic flight legs -->
+              <app-multi-city-fields
+                [formGroup]="multiCityFormData"
+                (swapAirports)="swapSelection()">
+              </app-multi-city-fields>
+  
+              <button type="submit" class="btn btn-continue">
+                <img src="../../../assets/icons/search.svg" alt="Search Icon" class="me-1" />
+                Search Flights
+              </button>
+            </form>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </section>
+  

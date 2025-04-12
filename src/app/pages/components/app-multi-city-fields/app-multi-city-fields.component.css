@@ -1,0 +1,181 @@
+:host {
+  display: block;
+}
+
+.multicity-container {
+  .flight-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1rem;
+
+    .flight-tab {
+      padding: 6px 12px;
+      font-size: 14px;
+      background-color: #f3f4f6;
+      border-radius: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.3s ease;
+
+      &.active {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      &:hover {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .remove-icon {
+        margin-left: 6px;
+        color: red;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 12px;
+      }
+    }
+
+    .add-flight {
+      color: #2a6f97;
+      background-color: transparent;
+      font-weight: 500;
+      border: none;
+    }
+  }
+
+  label {
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+
+  .form-control,
+  .form-select {
+    color: #757575;
+    border: 1px solid #bcc8d1;
+    margin-bottom: 10px;
+  }
+
+  .text-danger.small {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .arrow-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+  }
+
+  /* // Passenger Sliders */
+  .passenger-input {
+    position: relative;
+
+    label .age-info {
+      display: none;
+      margin-left: 6px;
+    }
+
+    &:hover label .age-info {
+      display: inline;
+    }
+  }
+
+  /* // Special fares section */
+  .special {
+    gap: 10px;
+    flex-wrap: wrap;
+
+    .badge {
+      background-color: #f3f4f6;
+      color: var(--black);
+      border-radius: 18px;
+      font-weight: 500;
+      padding: 4px 12px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--primary);
+        color: white;
+      }
+    }
+  }
+
+  /* // ngx-slider styling (deep scoped) */
+  ::ng-deep ngx-slider .ngx-slider-pointer {
+    width: 14px !important;
+    height: 14px !important;
+    background-color: var(--primary);
+    border: 2px solid white;
+    border-radius: 50%;
+  }
+
+  ::ng-deep ngx-slider .ngx-slider-pointer-range {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  ::ng-deep ngx-slider .ngx-slider-pointer:after {
+    background-color: transparent !important;
+  }
+
+  ::ng-deep ngx-slider .ngx-slider-bar {
+    height: 4px;
+    background: #ddd;
+  }
+
+  ::ng-deep ngx-slider .ngx-slider-selection {
+    background-color: var(--primary);
+  }
+}
+
+/* // Mobile responsive styling */
+@media (max-width: 767px) {
+  .flight-tabs {
+    gap: 6px;
+
+    .flight-tab {
+      font-size: 12px;
+      padding: 4px 8px;
+    }
+
+    .add-flight {
+      font-size: 12px;
+    }
+
+    .remove-icon {
+      font-size: 10px;
+    }
+  }
+
+  .arrow-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .passenger-input {
+    width: 100%;
+  }
+
+  .special {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+      font-size: 12px;
+    }
+  }
+
+  .col-md-5,
+  .col-md-6,
+  .col-md-4 {
+    width: 100%;
+  }
+}

@@ -1,0 +1,141 @@
+<div class="common-flight-fields">
+    <div class="row mb-4 align-items-center">
+      <!-- From Field -->
+      <div class="col-md-5">
+        <label for="from">From</label>
+        <ng-select
+          [items]="listOfAirports"
+          bindLabel="displayLabel"
+          bindValue="iataCode"
+          placeholder="Select Airport"
+          [clearable]="false"
+          formControlName="origin">
+          <ng-template ng-label-tmp let-item="item">
+            <span>{{ item.iataCode }} - {{ item.airportCity }}</span>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span>{{ item.airportCity }}</span> (<span>{{ item.iataCode }}</span>)
+                <br />
+                <span style="font-size: 10px; color: gray">{{ item.airportName }}</span>
+              </div>
+            </div>
+          </ng-template>
+        </ng-select>
+        <div *ngIf="formGroup.get('origin')?.invalid && formGroup.get('origin')?.touched" class="text-danger small">
+          Please select airport.
+        </div>
+      </div>
+  
+      <!-- Swap Icon -->
+      <div class="col-md-2 text-center mt-4">
+        <img src="assets/icons/form arrow.svg" alt="arrow" class="arrow-icon" (click)="onSwap()" />
+      </div>
+  
+      <!-- To Field -->
+      <div class="col-md-5">
+        <label for="to">To</label>
+        <ng-select
+          [items]="listOfAirports"
+          bindLabel="displayLabel"
+          bindValue="iataCode"
+          placeholder="Select Airport"
+          [clearable]="false"
+          formControlName="destination">
+          <ng-template ng-label-tmp let-item="item">
+            <span>{{ item.iataCode }} - {{ item.airportCity }}</span>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span>{{ item.airportCity }}</span> (<span>{{ item.iataCode }}</span>)
+                <br />
+                <span style="font-size: 10px; color: gray">{{ item.airportName }}</span>
+              </div>
+            </div>
+          </ng-template>
+        </ng-select>
+        <div *ngIf="formGroup.get('destination')?.invalid && formGroup.get('destination')?.touched" class="text-danger small">
+          Please select airport.
+        </div>
+      </div>
+    </div>
+  
+    <div class="row mb-3 justify-content-between">
+      <div class="col-md-5">
+        <label for="from">Departure</label>
+        <input
+          type="date"
+          class="form-control"
+          formControlName="fromDate"
+          [attr.min]="today" />
+        <div *ngIf="formGroup.get('fromDate')?.invalid && formGroup.get('fromDate')?.touched" class="text-danger small">
+          Please select a departure date.
+        </div>
+      </div>
+  
+      <!-- Return Date: Shown only if showReturn is true -->
+      <div class="col-md-5" *ngIf="showReturn">
+        <label for="return">Return</label>
+        <input
+          type="date"
+          class="form-control"
+          formControlName="toDate"
+          [attr.min]="today" />
+        <div *ngIf="formGroup.get('toDate')?.invalid && formGroup.get('toDate')?.touched" class="text-danger small">
+          Please select a return date.
+        </div>
+      </div>
+    </div>
+  
+    <!-- Passenger Controls (using ngx-slider) -->
+    <div class="row mb-4">
+      <div class="passenger-input col-md-4">
+        <label class="passenger-label">Adult <span class="age-info">(12+ Yrs)</span></label>
+        <ngx-slider formControlName="adults"></ngx-slider>
+      </div>
+      <div class="passenger-input col-md-4">
+        <label class="passenger-label">Child <span class="age-info">(2-12 Yrs)</span></label>
+        <ngx-slider formControlName="children"></ngx-slider>
+      </div>
+      <div class="passenger-input col-md-4">
+        <label class="passenger-label">Infants <span class="age-info">(0-2 Yrs)</span></label>
+        <ngx-slider formControlName="infants"></ngx-slider>
+      </div>
+      <!-- You can also include the mobile dropdown version if needed -->
+    </div>
+  
+    <!-- Special Fares -->
+    <div class="row mb-4">
+      <label>Special fares</label>
+      <div class="special container d-flex justify-content-between mt-2">
+        <span class="btn badge">Armed Forces</span>
+        <span class="btn badge">Medical Professionals</span>
+        <span class="btn badge">Senior Citizens</span>
+        <span class="btn badge">Students</span>
+      </div>
+    </div>
+  
+    <!-- Routes and Class Selection -->
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <label for="routes">Routes</label>
+        <select class="form-select" formControlName="routes">
+          <option value="Non Stop">Non Stop</option>
+          <option value="1 Stop">1 Stop</option>
+          <option value="2 Stop">2 Stop</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="economy">Class</label>
+        <select class="form-select" formControlName="class">
+          <option value="Economy">Economy</option>
+          <option value="Premium Economy">Premium Economy</option>
+          <option value="Business">Business</option>
+          <option value="First Class">First Class</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  

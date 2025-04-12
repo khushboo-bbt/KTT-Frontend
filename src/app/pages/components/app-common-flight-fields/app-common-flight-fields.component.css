@@ -1,0 +1,119 @@
+:host {
+  display: block;
+}
+
+.common-flight-fields {
+  label {
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+
+  .form-control,
+  .form-select {
+    color: #757575;
+    border: solid 1px #BCC8D1;
+    margin-bottom: 10px;
+  }
+
+  .arrow-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+  }
+
+  .text-danger.small {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .badge {
+    background-color: #f3f4f6;
+    color: var(--black);
+    border-radius: 18px;
+    line-height: 20px;
+    font-weight: 500;
+    padding: 4px 12px;
+    cursor: pointer;
+  }
+
+  .badge:hover {
+    background-color: var(--primary);
+    color: white;
+  }
+
+  .special {
+    gap: 10px;
+    flex-wrap: wrap;
+
+    .badge {
+      white-space: nowrap;
+    }
+  }
+
+  .passenger-input {
+    position: relative;
+
+    .passenger-label .age-info {
+      display: none;
+      margin-left: 8px;
+    }
+
+    &:hover .passenger-label .age-info {
+      display: inline;
+    }
+  }
+
+  ngx-slider .ngx-slider-pointer {
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  ngx-slider .ngx-slider-pointer-range {
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  ngx-slider .ngx-slider-pointer:after {
+    background-color: transparent !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .common-flight-fields {
+    .row {
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .col-md-5,
+    .col-md-4,
+    .col-md-6 {
+      width: 100%;
+    }
+
+    .arrow-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .special {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      background-color: white;
+
+      .badge {
+        flex: 0 0 auto;
+        scroll-snap-align: start;
+        font-size: 12px;
+        line-height: 16px;
+      }
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+}

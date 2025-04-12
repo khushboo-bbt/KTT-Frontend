@@ -1,0 +1,36 @@
+<ul class="nav nav-pills">
+    <li class="nav-item">
+      <input
+        type="button"
+        class="btn"
+        [class.active]="activeTab === 'oneWay'"
+        value="One Way"
+        (click)="onTabChange('oneWay')" />
+    </li>
+    <li class="nav-item">
+      <input
+        type="button"
+        class="btn"
+        [class.active]="activeTab === 'roundTrip'"
+        value="Round Trip"
+        (click)="onTabChange('roundTrip')" />
+    </li>
+    <li class="nav-item">
+      <input
+        type="button"
+        class="btn"
+        [class.active]="activeTab === 'multiCity'"
+        value="Multi City"
+        (click)="onTabChange('multiCity')" />
+    </li>
+    <!-- Uncomment the following for Group Fare in the future
+    <li class="nav-item">
+      <input
+        type="button"
+        class="btn"
+        [class.active]="activeTab === 'groupFare'"
+        value="Group Fare"
+        (click)="onTabChange('groupFare')" />
+    </li> -->
+  </ul>
+  
