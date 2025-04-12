@@ -1,36 +1,43 @@
-<ul class="nav nav-pills">
+<div class="form-type">
+  <ul class="nav nav-pills">
     <li class="nav-item">
       <input
         type="button"
         class="btn"
         [class.active]="activeTab === 'oneWay'"
+        aria-current="page"
         value="One Way"
-        (click)="onTabChange('oneWay')" />
+        (click)="toggleOneWayTrip()"
+      />
     </li>
     <li class="nav-item">
       <input
         type="button"
         class="btn"
         [class.active]="activeTab === 'roundTrip'"
+        aria-current="page"
         value="Round Trip"
-        (click)="onTabChange('roundTrip')" />
+        (click)="toggleRoundTrip()"
+      />
     </li>
     <li class="nav-item">
       <input
         type="button"
         class="btn"
         [class.active]="activeTab === 'multiCity'"
+        aria-current="page"
         value="Multi City"
-        (click)="onTabChange('multiCity')" />
+        (click)="toggleMultiCity()"
+      />
     </li>
-    <!-- Uncomment the following for Group Fare in the future
-    <li class="nav-item">
+    <!-- <li class="nav-item mx-2">
       <input
         type="button"
         class="btn"
-        [class.active]="activeTab === 'groupFare'"
+        aria-current="page"
         value="Group Fare"
-        (click)="onTabChange('groupFare')" />
+        (click)="toggleGroupFare()"
+      />
     </li> -->
   </ul>
-  
+</div>

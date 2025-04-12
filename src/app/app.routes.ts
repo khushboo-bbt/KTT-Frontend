@@ -53,6 +53,13 @@ export const routes: Routes = [
                 (c) => c.SearchFormComponent
               ),
           },
+          {
+            path: 'flight-search',
+            loadComponent: () =>
+              import('./feature/flight-search/flight-search.component').then(
+                (c) => c.FlightSearchComponent
+              ),
+          },
         ],
     },
 ];

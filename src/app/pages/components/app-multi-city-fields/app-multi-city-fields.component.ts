@@ -1,40 +1,43 @@
 import { NgFor, NgIf } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import {   FormGroup, FormArray, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import {NgSelectModule} from '@ng-select/ng-select';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { FormGroup, FormArray, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { Airport } from '../../../models/Airport';
+import { Subject } from 'rxjs';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
 
 @Component({
   selector: 'app-multi-city-fields',
   templateUrl: './app-multi-city-fields.component.html',
   styleUrls: ['./app-multi-city-fields.component.css'],
-  imports: [NgSelectModule,NgFor, NgIf, ReactiveFormsModule]
+  imports: [NgSelectModule, NgFor, NgIf, ReactiveFormsModule, NgxSliderModule]
 })
-export class AppMultiCityFieldsComponent {
-  @Input()
-  formGroup!: FormGroup; // Expected to have a 'legs' FormArray plus additional controls (adults, children, infants, routes, class)
-  @Output() swapAirports = new EventEmitter<void>();
+export class AppMultiCityFieldsComponent implements OnInit {
+  @Input() formGroup!: FormGroup;
   @Input() listOfAirports: any[] = [];
+  @Input() searchInput$ = new Subject<string>();
+  @Input() adultOptions: any;
+  @Input() childOptions: any;
+  @Input() infantOptions: any;
+  
+  @Output() airportSelect = new EventEmitter<{event: any, field: string}>();
+  @Output() swapAirports = new EventEmitter<void>();
+  @Output() submit = new EventEmitter<void>();
 
   activeFlightIndex: number = 0;
+  today = new Date().toISOString().split('T')[0];
+  minToDate = this.today;
 
   constructor(private fb: FormBuilder) {}
 
-  // Get the legs FormArray from the formGroup
+  ngOnInit(): void {
+    this.initializeForm();
+  }
+
   get legs(): FormArray {
     return this.formGroup.get('legs') as FormArray;
   }
 
-  // Set the active flight leg
-  setActiveFlight(index: number): void {
-    this.activeFlightIndex = index;
-  }
-
-  // Called when the swap icon is clicked in the active leg
-  onSwap(): void {
-    this.swapAirports.emit();
-  }
-
-  // Add a new flight leg (limit to 5)
   addLeg(): void {
     if (this.legs.length < 5) {
       this.legs.push(this.createLegFormGroup());
@@ -42,7 +45,6 @@ export class AppMultiCityFieldsComponent {
     }
   }
 
-  // Remove a flight leg (at least one leg must remain)
   removeLeg(index: number): void {
     if (this.legs.length > 1) {
       this.legs.removeAt(index);
@@ -52,7 +54,6 @@ export class AppMultiCityFieldsComponent {
     }
   }
 
-  // Helper to create a new leg form group (this should match your parent’s structure)
   createLegFormGroup(): FormGroup {
     return this.fb.group({
       origin: [null, Validators.required],
@@ -61,6 +62,43 @@ export class AppMultiCityFieldsComponent {
     });
   }
 
-  // For date inputs in multi-city, you may use the current date.
-  today: string = new Date().toISOString().split('T')[0];
+  selectAirport2(event: any, field: string): void {
+    this.airportSelect.emit({ event, field });
+  }
+
+  onSwap(): void {
+    this.swapAirports.emit();
+  }
+
+  setActiveFlight(index: number): void {
+    this.activeFlightIndex = index;
+  }
+
+  onSearch(term: string): void {
+    this.searchInput$.next(term);
+  }
+
+  updateMinToDate(): void {
+    const fromDate = this.formGroup.get('fromDate')?.value;
+    this.minToDate = fromDate || this.today;
+  }
+
+  submitMultiCityFormData(): void {
+    if (this.formGroup.valid) {
+      this.submit.emit();
+    }
+  }
+
+  private initializeForm(): void {
+    if (!this.formGroup) {
+      this.formGroup = this.fb.group({
+        legs: this.fb.array([this.createLegFormGroup()]),
+        adults: [1, [Validators.required, Validators.min(1)]],
+        children: [0, [Validators.required, Validators.min(0)]],
+        infants: [0, [Validators.required, Validators.min(0)]],
+        routes: ['Non Stop', Validators.required],
+        class: ['Economy', Validators.required]
+      });
+    }
+  }
 }

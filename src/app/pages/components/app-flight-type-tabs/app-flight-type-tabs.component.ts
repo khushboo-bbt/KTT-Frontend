@@ -9,8 +9,15 @@ export class AppFlightTypeTabsComponent {
   @Input() activeTab: string = 'oneWay';
 
   @Output() tabChange: EventEmitter<string> = new EventEmitter<string>();
+  @Input() toggleRoundTrip: any;
+  @Input() toggleMultiCity: any;
+  @Input() toggleGroupFare: any;
+  @Input() toggleOneWayTrip: any;
 
   onTabChange(tab: string): void {
     this.tabChange.emit(tab);
   }
+  oneWayForm: any;
+  roundTripForm: any;
+  multiCityForm: any;
 }

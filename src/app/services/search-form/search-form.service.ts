@@ -13,15 +13,8 @@ export class SearchFormService {
   constructor(private httpClient: HttpClient, private router: Router) {}
 
 
-  // getAllUsers() {
-  //   console.log('url----', this.url);
-  //   return this.httpClient.get(this.url + '/users');
-  // }
-
   getAirports(query: string): Observable<any[]> {
-    // Using HttpParams to append query to the URL
     const params = new HttpParams().set('query', query);
-    // Passing the HttpParams as the second argument in the get request
     return this.httpClient.get<any[]>(`${this.lccUrl}/booking/search`, { params });
   }
   

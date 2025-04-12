@@ -1,0 +1,371 @@
+.body-page {
+  background-color: #f3f7fc;
+}
+.no-of-flights {
+  background-color: var(--light);
+}
+.book-flight {
+  background-color: var(--primary);
+  color: var(--white);
+}
+.seats-left{
+  color: #EE6336;
+}
+.expandable-section {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out, transform 0.4s ease-in-out;
+}
+
+.expandable-section.show {
+  max-height: 500px; /* Adjust based on content */
+  opacity: 1;
+  transform: translateY(0);
+}
+/* roundtrip expandable  */
+.expandable-selected-round-trip-section {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out, transform 0.4s ease-in-out;
+}
+
+.expandable-selected-round-trip-section.show {
+  max-height: 400px; /* Adjust based on content */
+  opacity: 1;
+  transform: translateY(0);
+  overflow: auto; /* Enables scrolling */
+}
+
+/* Ensure smooth scrolling inside */
+.expandable-selected-round-trip-section.show::-webkit-scrollbar {
+  width: 6px;
+}
+
+.expandable-selected-round-trip-section.show::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+}
+
+.expandable-selected-round-trip-section.show::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.blue-card {
+  background-color: #e6f5fc;
+}
+.details-text{
+  font-size: 12px;
+}
+.details-response{
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--primary);;
+}
+.toggle-roundtrip-cards{
+  background-color: white;
+  color: #000;
+  border-radius: 0%;
+}
+.selected {
+  background-color: #248BA8;
+  color: white;
+}
+.round-trip-price{
+  font-weight: 500;
+}
+.arrow-card.default-image {
+  width: 100%; /* or any other default width */
+  max-width: 500px; /* Set a max width if necessary */
+  height: auto; /* To maintain the aspect ratio */
+}
+.reset {
+  color: #007191;
+}
+.img-logo-flight {
+  width: 50px;  /* Adjust width as needed */
+  height: auto;  /* Maintain aspect ratio */
+}
+.detail-btn{
+font-size: 14px;
+display: block;
+background-color: #DAF4FF2B;
+color: #007191;
+}
+.flight-details-text{
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.fixed-bottom-center {
+  position: fixed;
+  bottom: 10px; /* Distance from the bottom of the screen */
+  z-index: 9999; /* Ensure it appears above other content */
+}
+.selected-container{
+  background-color: #003E58;
+}
+.selected-flight-card{
+  background-color: #DAF4FF0F;
+  gap: 20px;
+}
+.book-flight{
+  background-color: white;
+  line-height: 20px;
+  color: black;
+  border-radius: 4px;
+}
+/* Default SELECT button styles */
+.select {
+  background-color: #daf4ff;
+  color: #000;
+  border: none;
+  width: 100%;
+  padding: 10px;
+  border-bottom-left-radius:5px ;
+  border-bottom-right-radius:5px ;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.book-one-way {
+  background-color: #007191;
+  color: white;
+  border: none;
+  width: 100%;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.select.selected {
+  background-color: #007191;
+  color: white;
+  border-bottom-left-radius:5px ;
+  border-bottom-right-radius:5px ;
+}
+
+/* Hover effect for SELECT button */
+.select:hover {
+  opacity: 0.8;
+}
+#filterSection {
+  position: -webkit-sticky;  /* For Safari */
+  position: sticky;
+  top: 20px; /* You can adjust this based on how far from the top you want it to start sticking */
+  max-height: 100vh; /* Ensures the filter box takes the full height of the viewport */
+  overflow-y: auto;  /* Allows scrolling within the filter box if content overflows */
+  padding-right: 15px; /* Optional, for scrollbar appearance */
+}
+.filter {
+  background-color: var(--primary);
+  color: var(--white);
+}
+.filter-time-btn{
+  font-size: 14px;
+}
+/* Custom radio button color */
+.form-check-input:checked {
+  background-color: #007191 !important;
+  border-color: #007191 !important;
+}
+.form-check-input:hover {
+  border-color: #007191 !important;
+}
+.departure button,
+.arrival button {
+  background-color: #0C68BE1A;
+  text-align: center;
+}
+.time-period{
+  color: #007191;
+  font-weight: 600;
+}
+/* Change color to white on hover */
+.btn:hover .time-period {
+  color: white;
+}
+.departure button:hover,
+.arrival button:hover {
+  background-color: var(--primary);
+  color: var(--white);
+  border: 1px solid var(--black);
+}
+.no-of-flights {
+  background-color: #daf4ff;
+}
+.detail-btn {
+  color: var(--primary);
+}
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .arrow-card.default-image {
+      width: 80%; /* Adjust width for mobile, you can change this value */
+    }
+  }
+
+  .tooltip-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+  
+  .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: white;
+    color: black;
+    text-align: center;
+    padding: 8px;
+    border-radius: 6px;
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  
+  .tooltip-container:hover .tooltip-text {
+    visibility: visible;
+  }
+
+/* round trip column opacity  */
+.flight-column {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+.roundtrip-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  backdrop-filter: blur(1px); /* Apply blur effect */
+  z-index: 10;
+}
+
+@media (min-width: 992px) {
+  .inactive-lg {
+    opacity: 0.5; /* Reduce visibility */
+    pointer-events: none; /* Disable interactions */
+    filter: grayscale(50%);
+  }
+}
+
+/* 👇 Small Screens: Hide the Unselected Trip */
+@media (max-width: 991px) {
+  .flight-column {
+    display: none;
+  }
+
+  /* ✅ Show only the selected trip */
+  .flight-column.active-sm {
+    display: block !important;
+  }
+  }
+  
+  .toggle-roundtrip-cards.btn {
+    color: black;
+    padding: 10px;
+    border-radius: 2px;
+  }
+  
+  .toggle-roundtrip-cards.btn.selected {
+    background-color: #007191;
+    color: white;
+  }
+  
+  .card {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .select.selected {
+    background-color: #007191; /* Darker blue when selected */
+  }
+  
+/* Reduce button width & font size */
+.small-btn {
+  font-size: 12px;  /* Decrease font size */
+  max-width: 120px; /* Reduce button width */
+}
+
+/* Active button */
+.details-toggle {
+  background-color: #007191 !important;
+  color: white !important;
+  border: none;
+}
+
+/* Inactive button */
+.btn-light {
+  background-color: white !important;
+  color: black !important;
+  border: 1px solid #ccc;
+}
+/* multicity results css  */
+.multicity-cards-toggle{
+  background-color: white;
+  border: 1px solid rgb(192, 192, 192);
+  padding: 0;
+}
+.toggle-multicity-cards.btn {
+  color: black;
+  padding: 10px;
+  border-radius: 0px;
+  border-left: 1px solid rgb(192, 192, 192);
+}
+.multicity-flight-details-expanded {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  overflow: hidden; /* Hide content when collapsed */
+  padding: 0;
+  background: #ffffff;
+  border-radius: 8px;
+  transition:
+    max-height 0.5s ease-in-out,
+    opacity 0.4s ease-in-out,
+    transform 0.4s ease-in-out,
+    padding 0.4s ease-in-out;
+}
+
+.multicity-flight-details-expanded.show {
+  max-height: 500px; /* Large enough to ensure scroll works */
+  opacity: 1;
+  transform: translateY(0);
+  padding: 10px;
+  overflow-y: auto; /* Allow scrolling */
+}
+
+
+.multicity-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  backdrop-filter: blur(1px); /* Apply blur effect */
+  z-index: 10;
+}
+.toggle-multicity-cards.btn.selected {
+  background-color: #007191;
+  color: white;
+}
+.loader-container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 50vh; /* Full screen height */
+}
+
+.loader {
+  width: 300px; /* Adjust the size */
+  height: auto;
+}
+
