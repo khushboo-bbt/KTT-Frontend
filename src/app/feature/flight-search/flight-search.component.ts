@@ -2,15 +2,15 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SearchFormService } from '../../services/search-form/search-form.service';
-import { SearchFormComponent } from '../search-form/search-form.component';
 import { AirPriceParserService } from '../../services/air-price-parser/air-price-parser.service';
+import { ModifySearchComponent } from '../modify-search/modify-search.component';
 @Component({
   selector: 'app-flight-search',
   standalone: true,
   imports: [
     RouterLink,
     CommonModule,
-    SearchFormComponent,
+    ModifySearchComponent,
   ],
   templateUrl: './flight-search.component.html',
   styleUrls: ['./flight-search.component.css'],
@@ -61,7 +61,13 @@ export class FlightSearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      this.formData = { ...params };
+      this.formData = {
+        ...params,
+        students: params['students'] || '0',
+        armedForces: params['armedForces'] || '0',
+        seniorCitizens: params['seniorCitizens'] || '0',
+        medicalProfessionals: params['medicalProfessionals'] || '0'
+      };
       if (params['legs']) {
         this.formData.legs = JSON.parse(params['legs']);
       }

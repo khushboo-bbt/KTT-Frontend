@@ -27,7 +27,7 @@ import { AppMultiCityFieldsComponent } from '../../pages/components/app-multi-ci
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-search-form',
+  selector: 'app-modify-search',
   standalone: true,
   imports: [
     FormsModule,
@@ -36,20 +36,19 @@ import { ActivatedRoute } from '@angular/router';
     NgxSliderModule,
     NgSelectModule,
     NgIf,
-    AppCarouselComponent,
     AppFlightTypeTabsComponent,
     AppCommonFlightFieldsComponent,
     AppMultiCityFieldsComponent,
   ],
-  templateUrl: './search-form.component.html',
-  styleUrl: './search-form.component.css',
+  templateUrl: './modify-search.component.html',
+  styleUrls: ['./modify-search.component.css']
 })
-export class SearchFormComponent implements OnInit {
+export class ModifySearchComponent implements OnInit {
 
   today: string = new Date().toISOString().split('T')[0];
   minToDate: string = this.today;
   searchInput$ = new Subject<string>();
-
+  showMoreFilters: boolean = false;
 
   updateMinToDate(): void {
     const fromDate = this.roundTripFormData.get('fromDate')?.value;
@@ -64,7 +63,6 @@ export class SearchFormComponent implements OnInit {
   ) { }
 
   activeFlightIndex: number = 0;
-
   selectAirport(event: any, field: string) {
     if (!event || !event.iataCode) return;
 
@@ -277,7 +275,7 @@ export class SearchFormComponent implements OnInit {
   submitOneWayFormData() {
     if (this.oneWayFormData.valid) {
       const formData = this.oneWayFormData.value;
-      
+
       const payload = {
         origin: formData.origin,
         destination: formData.destination,
@@ -341,6 +339,9 @@ export class SearchFormComponent implements OnInit {
       },
     });
   }
+  toggleMoreFilters() {
+    this.showMoreFilters = !this.showMoreFilters;
+  }
 
   loadAirports(query: string): void {
     this.searchFormService.getAirports(query).subscribe(
@@ -369,26 +370,16 @@ export class SearchFormComponent implements OnInit {
 
     this.loadAirports('');
 
-    this.oneWayFormData = this.formBuilder.group({
-      origin: [null, Validators.required],
-      destination: [null, Validators.required],
-      fromDate: ['', Validators.required],
-      adults: [1, Validators.required],
-      children: [0, Validators.required],
-      infants: [0, Validators.required],
-      routes: ['Non Stop', Validators.required],
-      class: ['Economy', Validators.required],
-      // Add individual controls for each special fare
-      students: ['0'],
-      armedForces: ['0'],
-      seniorCitizens: ['0'],
-      medicalProfessionals: ['0']
-    });
+    // Initialize forms first
+    this.initializeOneWayForm();
+    this.initializeRoundTripForm();
+    this.initializeMultiCityForm();
 
     // Handle query params for form population
     this.route.queryParams.subscribe(params => {
       if (Object.keys(params).length > 0) {
         const formType = params['formType'];
+        
         if (formType === 'one-way') {
           this.oneWayFormData.patchValue({
             origin: params['origin'] || null,
@@ -432,14 +423,13 @@ export class SearchFormComponent implements OnInit {
             const legs = JSON.parse(params['legs'] || '[]');
             if (legs.length) {
               const legControls = legs.map((leg: any) =>
-                this.formBuilder.group({
-                  origin: [leg.origin, Validators.required],
-                  destination: [leg.destination, Validators.required],
-                  fromDate: [leg.fromDate, Validators.required]
+                this.createLegFormGroup({
+                  origin: leg.origin,
+                  destination: leg.destination,
+                  fromDate: leg.fromDate
                 })
               );
 
-              // Create a new FormGroup with the updated legs FormArray
               this.multiCityFormData = this.formBuilder.group({
                 legs: this.formBuilder.array(legControls),
                 adults: [+params['adults'] || 1, [Validators.required, Validators.min(1)]],
@@ -475,26 +465,15 @@ export class SearchFormComponent implements OnInit {
       infants: [this.passengerCounts.infant, Validators.required],
       routes: ['Non Stop', Validators.required],
       class: ['Economy', Validators.required],
-      // Add special fare controls
-      armedForces: ['0'],
-      medicalProfessionals: ['0'],
-      seniorCitizens: ['0'],
-      students: ['0']
-    });
 
-    // Initialize Multi-city form
+    });
     this.multiCityFormData = this.formBuilder.group({
-      legs: this.formBuilder.array([this.createLegFormGroup()]),
+      legs: this.formBuilder.array([this.createLegFormGroup()]), // Default one leg
       adults: [1, [Validators.required, Validators.min(1)]],
-      children: [0, [Validators.required, Validators.min(0)]],
       infants: [0, [Validators.required, Validators.min(0)]],
+      children: [0, [Validators.required, Validators.min(0)]],
       routes: ['Non Stop', Validators.required],
-      class: ['Economy', Validators.required],
-      // Add special fare controls
-      armedForces: ['0'],
-      medicalProfessionals: ['0'],
-      seniorCitizens: ['0'],
-      students: ['0']
+      class: ['Economy', Validators.required]
     });
 
     // Sync One Way and Round Trip forms
@@ -623,12 +602,43 @@ export class SearchFormComponent implements OnInit {
       children: [0, [Validators.required, Validators.min(0)]],
       infants: [0, [Validators.required, Validators.min(0)]],
       routes: ['Non Stop', Validators.required],
+      class: ['Economy', Validators.required]
+    });
+  }
+
+  private initializeOneWayForm(): void {
+    this.oneWayFormData = this.formBuilder.group({
+      origin: [null, Validators.required],
+      destination: [null, Validators.required],
+      fromDate: ['', Validators.required],
+      adults: [1, Validators.required],
+      children: [0, Validators.required],
+      infants: [0, Validators.required],
+      routes: ['Non Stop', Validators.required],
       class: ['Economy', Validators.required],
-      // Add special fare controls
+      students: ['0'],
       armedForces: ['0'],
-      medicalProfessionals: ['0'],
       seniorCitizens: ['0'],
-      students: ['0']
+      medicalProfessionals: ['0']
+    });
+  }
+
+  private initializeRoundTripForm(): void {
+    this.roundTripFormData = this.formBuilder.group({
+      origin: [null, Validators.required],
+      destination: [null, Validators.required],
+      fromDate: ['', Validators.required],
+      toDate: ['', Validators.required],
+      adults: [1, Validators.required],
+      children: [0, Validators.required],
+      infants: [0, Validators.required],
+      routes: ['Non Stop', Validators.required],
+      class: ['Economy', Validators.required],
+      students: ['0'],
+      armedForces: ['0'],
+      seniorCitizens: ['0'],
+      medicalProfessionals: ['0']
     });
   }
 }
+

@@ -160,11 +160,11 @@
       <!-- Special Fares -->
       <div class="row mb-4">
         <label>Special fares</label>
-        <div class="special container d-flex justify-content-start justify-content-md-between mt-2">
-          <span class="btn badge">Armed Forces</span>
-          <span class="btn badge">Medical Professionals</span>
-          <span class="btn badge">Senior Citizens</span>
-          <span class="btn badge">Students</span>
+        <div class="special d-flex justify-content-between mt-2">
+          <span *ngFor="let fare of specialFares" class="btn badge" [class.active]="isSpecialFareSelected(fare.id)"
+            (click)="toggleSpecialFare(fare.id)">
+            {{fare.label}}
+          </span>
         </div>
       </div>
 

@@ -4,16 +4,9 @@
       <!-- From -->
       <div class="col-md-5">
         <label for="from">From</label>
-        <ng-select
-          [items]="listOfAirports"
-          bindLabel="displayLabel"
-          bindValue="iataCode"
-          placeholder="Select Airport"
-          [clearable]="false"
-          formControlName="origin"
-          (change)="selectAirport($event, 'origin')"
-          [typeahead]="searchInput$"
-          (search)="onSearch($event.term)">
+        <ng-select [items]="listOfAirports" bindLabel="displayLabel" bindValue="iataCode" placeholder="Select Airport"
+          [clearable]="false" formControlName="origin" (change)="selectAirport($event, 'origin')"
+          [typeahead]="searchInput$" (search)="onSearch($event.term)">
           <ng-template ng-label-tmp let-item="item">
             <span>{{ item.iataCode }} - {{ item.airportCity }}</span>
           </ng-template>
@@ -39,16 +32,9 @@
       <!-- To -->
       <div class="col-md-5">
         <label for="to">To</label>
-        <ng-select
-          [items]="listOfAirports"
-          bindLabel="displayLabel"
-          bindValue="iataCode"
-          placeholder="Select Airport"
-          [clearable]="false"
-          formControlName="destination"
-          (change)="selectAirport($event, 'destination')"
-          [typeahead]="searchInput$"
-          (search)="onSearch($event.term)">
+        <ng-select [items]="listOfAirports" bindLabel="displayLabel" bindValue="iataCode" placeholder="Select Airport"
+          [clearable]="false" formControlName="destination" (change)="selectAirport($event, 'destination')"
+          [typeahead]="searchInput$" (search)="onSearch($event.term)">
           <ng-template ng-label-tmp let-item="item">
             <span>{{ item.iataCode }} - {{ item.airportCity }}</span>
           </ng-template>
@@ -61,7 +47,8 @@
             </div>
           </ng-template>
         </ng-select>
-        <div *ngIf="formGroup.get('destination')?.invalid && formGroup.get('destination')?.touched" class="text-danger small">
+        <div *ngIf="formGroup.get('destination')?.invalid && formGroup.get('destination')?.touched"
+          class="text-danger small">
           Please select airport.
         </div>
       </div>
@@ -71,11 +58,7 @@
     <div class="row mb-3 justify-content-between">
       <div class="col-md-5">
         <label for="departure">Departure</label>
-        <input
-          class="form-control"
-          type="date"
-          formControlName="fromDate"
-          [attr.min]="today"
+        <input class="form-control" type="date" formControlName="fromDate" [attr.min]="today"
           (change)="updateMinToDate()" />
         <div *ngIf="formGroup.get('fromDate')?.invalid && formGroup.get('fromDate')?.touched" class="text-danger small">
           Please select a departure date.
@@ -84,17 +67,12 @@
 
       <div class="col-md-5" *ngIf="showReturn">
         <label for="return">Return</label>
-        <input
-          class="form-control"
-          type="date"
-          formControlName="toDate"
-          [attr.min]="minToDate" />
+        <input class="form-control" type="date" formControlName="toDate" [attr.min]="minToDate" />
         <div *ngIf="formGroup.get('toDate')?.invalid && formGroup.get('toDate')?.touched" class="text-danger small">
           Please select a return date.
         </div>
       </div>
     </div>
-
     <!-- Passenger Sliders -->
     <div class="row mb-4">
       <div class="passenger-input col-md-4">
@@ -115,10 +93,10 @@
     <div class="row mb-4">
       <label>Special fares</label>
       <div class="special d-flex justify-content-between mt-2">
-        <span class="btn badge">Armed Forces</span>
-        <span class="btn badge">Medical Professionals</span>
-        <span class="btn badge">Senior Citizens</span>
-        <span class="btn badge">Students</span>
+        <span *ngFor="let fare of specialFares" class="btn badge" [class.active]="isSpecialFareSelected(fare.id)"
+          (click)="toggleSpecialFare(fare.id)">
+          {{fare.label}}
+        </span>
       </div>
     </div>
 

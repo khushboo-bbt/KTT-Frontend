@@ -1,7 +1,7 @@
 import { NgxSliderModule, Options } from '@angular-slider/ngx-slider';
 import { NgFor, NgIf } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormArray, ReactiveFormsModule } from '@angular/forms';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { FormGroup, FormArray, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { Subject } from 'rxjs';
 
@@ -11,10 +11,10 @@ import { Subject } from 'rxjs';
   styleUrls: ['./app-multi-city-fields.component.css'],
   imports: [NgSelectModule, NgxSliderModule, NgIf,NgFor, ReactiveFormsModule]
 })
-export class AppMultiCityFieldsComponent {
+export class AppMultiCityFieldsComponent implements OnInit {
   @Input() formGroup!: FormGroup;
   @Input() listOfAirports: any[] = [];
-  @Input() searchInput$!: Subject<string>;
+  @Input() searchInput$ = new Subject<string>();
   @Input() multiCityForm: boolean = true;
   @Input() activeFlightIndex: number = 0;
   @Input() adultOptions: Options = { floor: 1, ceil: 9, step: 1 };
@@ -28,6 +28,16 @@ export class AppMultiCityFieldsComponent {
   @Output() addLegClick = new EventEmitter<void>();
   @Output() removeLegClick = new EventEmitter<number>();
   @Output() activeFlightIndexChange = new EventEmitter<number>();
+  specialFares = [
+    { id: 'armedForces', label: 'Armed Forces' },
+    { id: 'medicalProfessionals', label: 'Medical Professionals' },
+    { id: 'seniorCitizens', label: 'Senior Citizens' },
+    { id: 'students', label: 'Students' }
+  ];
+
+  selectedSpecialFare: string | null = null;
+
+  constructor(private fb: FormBuilder) {}
 
   today = new Date().toISOString().split('T')[0];
   minToDate = this.today;
@@ -106,7 +116,39 @@ export class AppMultiCityFieldsComponent {
   }
 
   ngOnInit(): void {
-    // Initial validation of form state
+    // Initialize special fare controls if they don't exist
+    this.specialFares.forEach(fare => {
+      if (!this.formGroup.contains(fare.id)) {
+        this.formGroup.addControl(fare.id, this.fb.control('0'));
+      }
+    });
+
+    // Check which special fare is selected
+    for (const fare of this.specialFares) {
+      if (this.formGroup.get(fare.id)?.value === '1') {
+        this.selectedSpecialFare = fare.id;
+        break;
+      }
+    }
+
+    // Existing form state validation
     this.validateFormState();
+  }
+  toggleSpecialFare(fareId: string): void {
+    if (this.selectedSpecialFare === fareId) {
+      this.selectedSpecialFare = null;
+      this.specialFares.forEach(fare => {
+        this.formGroup.get(fare.id)?.setValue('0');
+      });
+    } else {
+      this.selectedSpecialFare = fareId;
+      this.specialFares.forEach(fare => {
+        this.formGroup.get(fare.id)?.setValue(fare.id === fareId ? '1' : '0');
+      });
+    }
+  }
+
+  isSpecialFareSelected(fareId: string): boolean {
+    return this.formGroup.get(fareId)?.value === '1';
   }
 }

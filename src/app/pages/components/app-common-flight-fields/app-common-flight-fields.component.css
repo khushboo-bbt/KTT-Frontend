@@ -271,6 +271,17 @@
     font-size: 12px;
     font-weight: 400;
     border-radius: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .special .badge.active {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .special .badge:hover {
+    opacity: 0.8;
   }
 
   /* Routes and Economy */
